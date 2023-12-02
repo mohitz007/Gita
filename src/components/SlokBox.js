@@ -1,57 +1,52 @@
-import React, { useState,useEffect } from "react";
-import { Text, View, TouchableOpacity } from "react-native";
-import cheerio from "cheerio";
-import { instance } from "../configs/axiosConfig";
+import React, { useState, useEffect } from "react";
+import { Text, View, TouchableOpacity,StyleSheet,useColorScheme  } from "react-native";
 
 
-const SlokBox = ({language,fcv,fnv}) => {
-    const [Slok, setSlok] = useState("")
+import { LightBackground,LightText,DarkBackground,DarkText } from "../../assets/Constants";
 
-    console.log(language,fcv,fnv);
+const SlokBox = ({ slok }) => {
 
-    const parameters = {
-        language : language,
-        field_chapter_value : fcv,
-        field_nsutra_value : fnv,
-    }
+    // console.log("slok",slok);
 
-    const fetch_slok = async () => {
-        console.log("fetch");
-        instance.get('/srimad',{
-            params : parameters,
-        })
-            .then((response) => {
-                const html = response.data;
-                const $ = cheerio.load(html);
+    const colorScheme = useColorScheme();
+    const isDarkMode = colorScheme === 'dark';
 
-                const elements = $('.views-field.views-field-body');
+    let {title,text} = slok;
 
-                elements.each((index, element) => {
-                    const text = $(element).text();
-                    setSlok(text)
-                });
-            })
-            .catch((error) => {
-                console.error(`Error fetching URL: ${error}`);
-                setSlok("Network Error please try later")
-            });
-    }
-
-
-    useEffect(() => {
-        fetch_slok();
-    }, [fcv,fnv])
-    
-
-    
 
     return (
-            <Text>{Slok}</Text>
+        <View style={[styles.container , { backgroundColor: isDarkMode ? '#333333' : '#FFFFFF' }]}>
+
+            <Text style={[styles.title, { color: isDarkMode ? '#006cbb' : '#000000' }]}>{title}</Text>
+            <Text style={[styles.text, { color: isDarkMode ? DarkText : LightText }]}>{text}</Text>
+        </View>
     )
 
 
 
 };
 
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#FFFFFF', // White background
+        paddingHorizontal: 16, // Padding on the left and right
+        paddingVertical: 20, // Padding on the top and bottom
+        borderRadius: 8, // Border radius for rounded corners
+        margin: 10, // Margin around the component
+        borderColor: '#EDEDED', // Border color (optional)
+        borderWidth: 1, // Border width (optional)
+      },
+      title: {
+        fontSize: 15,
+        fontWeight: 'bold',
+        marginBottom: 7,
+      },
+      text: {
+        color: '#000000', // Black text
+        lineHeight: 26, // Line height for increased spacing between lines
+      },
+});
 
 export default SlokBox;

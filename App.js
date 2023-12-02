@@ -10,6 +10,7 @@ import store from './src/redux/store';
 import { Text, TouchableOpacity } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
 import SettingsScreen from './src/screens/SettingsScreen';
@@ -32,7 +33,7 @@ const App = () => {
         <Stack.Screen 
         name="Home" 
         component={HomeScreen}
-        options={{headerTitle: "Books"}}
+        options={{headerShown: false}}
         />
         <Stack.Screen 
         name="Slok" 
@@ -56,7 +57,7 @@ const App = () => {
             <AntDesign name="book" color={color} size={size} />
           ),
           headerShown: false,
-
+          title: "Home",
         }}
           />
         <Tab.Screen 
@@ -64,8 +65,10 @@ const App = () => {
         component={SettingsScreen}
         options={{
           tabBarIcon: ({color,size}) => (
-            <Feather name="settings" color={color} size={size} />
-          )
+            // <Feather name="settings" color={color} size={size} />
+            <MaterialCommunityIcons name="translate" color={color} size={size} />
+          ),
+          title: "Translations & Languages",
         }} 
         />
         </Tab.Navigator>
