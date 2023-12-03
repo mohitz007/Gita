@@ -9,7 +9,7 @@ const initialState = {
     data: {
         language: 'dv',
         field_chapter_value: 1,
-        field_nsutra_value: 45,
+        field_nsutra_value: 1,
         slok: "",
         htrskd: { value: 0, text: "", title: "Hindi Translation By Swami Ramsukhdas" },
         httyn: { value: 0, text: "", title: "Hindi Translation By Swami Tejomayananda" },
@@ -34,10 +34,10 @@ const initialState = {
         etpurohit: { value: 0, text: "", title: "English Translation by Shri Purohit Swami" },
         etgb: { value: 0, text: "", title: "English Translation By Swami Gambirananda" },
         setgb: { value: 0, text: "", title: "English Translation Of Sri Shankaracharya's Sanskrit Commentary By Swami Gambirananda" },
-        etssa: { value: 0, text: "", title: "English Translation By By Dr. S. Sankaranarayan" },
+        etssa: { value: 1, text: "", title: "English Translation By By Dr. S. Sankaranarayan" },
         etassa: { value: 0, text: "", title: "English Translation of Abhinavgupta's Sanskrit Commentary By Dr. S. Sankaranarayan" },
         etradi: { value: 0, text: "", title: "English Translation of Ramanuja's Sanskrit Commentary By Swami Adidevananda" },
-        etadi: { value: 0, text: "", title: "English Translation By Swami Adidevananda" },
+        etadi: { value: 1, text: "", title: "English Translation By Swami Adidevananda" },
     }
 };
 

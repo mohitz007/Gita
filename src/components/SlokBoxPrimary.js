@@ -11,17 +11,17 @@ const SlokBoxPrimary = ({ slok, language }) => {
     const SlokHeaderLanguage = () => {
         console.log("Slok");
         switch (language) {
-            case "bn": return "মূল আয়াত";
+            case "bn": return "মূল শ্লোকঃ";
             case "dv": return "मूल श्लोक";
-            case "gu": return "મૂળ શ્લોક";
-            case "pa": return "ਮੂਲ ਬਾਣੀ";
-            case "kn": return "ಮೂಲ ಪದ್ಯ";
-            case "ml": return "യഥാർത്ഥ വാക്യം";
-            case "or": return "ମୂଳ ପଦ |";
-            case "ro": return "The original verse";
-            case "ta": return "அசல் வசனம்";
-            case "te": return "అసలు పద్యం";
-            case "as": return "মূল পদ";
+            case "gu": return "મૂલ શ્લોકઃ";
+            case "pa": return "ਮੂਲ ਸ਼ਲੋਕਃ";
+            case "kn": return "ಮೂಲ ಶ್ಲೋಕಃ";
+            case "ml": return "മൂല ശ്ലോകഃ";
+            case "or": return "ମୂଳ ଶ୍ଲୋକଃ";
+            case "ro": return "mūla ślokaḥ";
+            case "ta": return "மூல ஶ்லோகஃ";
+            case "te": return "మూల శ్లోకః";
+            case "as": return "মূল শ্লোকঃ";
             default: return "मूल श्लोकः";
         }
     };

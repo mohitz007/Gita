@@ -13,12 +13,12 @@ const SlokBox = ({ slok }) => {
 
     let {title,text} = slok;
 
-
+    
     return (
         <View style={[styles.container , { backgroundColor: isDarkMode ? '#333333' : '#FFFFFF' }]}>
 
             <Text style={[styles.title, { color: isDarkMode ? '#006cbb' : '#000000' }]}>{title}</Text>
-            <Text style={[styles.text, { color: isDarkMode ? DarkText : LightText }]}>{text}</Text>
+            <Text style={[styles.text, { color: isDarkMode ? DarkText : LightText }]}>{text === "" ? text = "There is no commentry by this author." : text}</Text>
         </View>
     )
 

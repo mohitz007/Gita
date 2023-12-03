@@ -19,7 +19,7 @@ const HomeScreen = ({ navigation }) => {
         Animated.loop(
             Animated.sequence([
                 Animated.timing(arrowOpacity, {
-                    toValue: 0,
+                    toValue: 0.5,
                     duration: 1000,
                     easing: Easing.linear,
                     useNativeDriver: true,
@@ -63,7 +63,7 @@ const HomeScreen = ({ navigation }) => {
             </View>
             <TouchableOpacity onPress={handleSwipe} style={styles.arrowContainer} >
             <Animated.View style={{ opacity: arrowOpacity }}>
-                <AntDesign name="arrowright" size={50} color="white" />
+                <AntDesign name="arrowright" size={90} color="#000000" />
             </Animated.View>
 
             </TouchableOpacity>

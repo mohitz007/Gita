@@ -1,18 +1,28 @@
-import React, { useState } from "react";
-import { Text, View, ScrollView, TouchableOpacity,StyleSheet,useColorScheme  } from "react-native";
+import React, { useState,useEffect } from "react";
+import { Text, View, ScrollView, TouchableOpacity, StyleSheet, useColorScheme } from "react-native";
 import { CheckBox } from "@rneui/themed";
 import { useDispatch, useSelector } from 'react-redux';
 import { Picker } from '@react-native-picker/picker';
+import { useIsFocused } from '@react-navigation/native';
 
 import { setSlokChapterLanguage, setTranslation } from "../redux/gita_action_reducer";
 
-import { LightBackground,LightText,DarkBackground,DarkText } from "../../assets/Constants";
+import { LightBackground, LightText, DarkBackground, DarkText } from "../../assets/Constants";
 
 const SettingsScreen = ({ navigation }) => {
 
     const dispatch = useDispatch();
     const colorScheme = useColorScheme();
-    
+    const isFocused = useIsFocused();
+
+
+    useEffect(() => {
+        if (!isFocused) {
+            console.log("Not Focused");
+            dispatch(setSlokChapterLanguage([...checked, languageValue]));
+        }
+      }, [isFocused]);
+
     const { field_nsutra_value, field_chapter_value, language } = useSelector(state => state.gita_action_reducer.data);
     const { htrskd,
         httyn,
@@ -78,9 +88,9 @@ const SettingsScreen = ({ navigation }) => {
     const [languageValue, setlanguageValue] = useState(language);
 
     const languages = [
+        { name: "Devanagri", value: "dv" },
         { name: "Assamese", value: "as" },
         { name: "Bengali", value: "bn" },
-        { name: "Devanagri", value: "dv" },
         { name: "Gujarati", value: "gu" },
         { name: "Gurmukhi", value: "pa" },
         { name: "Kannada", value: "kn" },
@@ -101,48 +111,49 @@ const SettingsScreen = ({ navigation }) => {
 
     const handleSubmit = () => {
         // console.log(checked);
-        dispatch(setSlokChapterLanguage([...checked,languageValue]));
+        dispatch(setSlokChapterLanguage([...checked, languageValue]));
         navigation.navigate("Slok");
 
     };
 
     return (
-        // <View>
+        <View style={{ backgroundColor: colorScheme === 'dark' ? DarkBackground : LightBackground ,flex: 1}}>
 
-        <ScrollView style={[styles.scrollViewStyle,{backgroundColor : colorScheme === 'dark' ? DarkBackground : LightBackground}]}>
-        
-            <View>
-                <Picker
-                    selectedValue={languageValue}
-                    onValueChange={(itemValue, itemIndex) => setlanguageValue(itemValue)}
-                    mode="dropdown"
-                    
-                >
-                    {languages.map((option, index) => (
-                        <Picker.Item key={index} label={option.name} value={option.value} />
-                    ))}
-                </Picker>
-            </View>
+            <ScrollView style={styles.scrollViewStyle}>
+
+                <View >
+                    <Picker
+                        selectedValue={languageValue}
+                        onValueChange={(itemValue, itemIndex) => setlanguageValue(itemValue)}
+                        mode="dropdown"
+
+                    >
+                        {languages.map((option, index) => (
+                            <Picker.Item key={index} label={`Language - ${option.name}`} value={option.value} />
+                        ))}
+                    </Picker>
+                </View>
 
 
-            {checked.map((item, index) => (
+                {checked.map((item, index) => (
 
-                <CheckBox
-                    key={index}
-                    title={item.title}
-                    checked={item.value}
-                    iconType="material-community"
-                    checkedIcon="checkbox-outline"
-                    uncheckedIcon={'checkbox-blank-outline'}
-                    onPress={() => handleCheckboxToggle(index)}
-                    containerStyle={styles.checkBoxContainer}
-                />
-            ))}
+                    <CheckBox
+                        key={index}
+                        title={item.title}
+                        checked={item.value}
+                        iconType="material-community"
+                        checkedIcon="checkbox-outline"
+                        uncheckedIcon={'checkbox-blank-outline'}
+                        onPress={() => handleCheckboxToggle(index)}
+                        containerStyle={styles.checkBoxContainer}
+                        textStyle={styles.checkBoxText}
+                    />
+                ))}
+            </ScrollView>
             <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
                 <Text style={styles.submitButtonText}>Submit</Text>
             </TouchableOpacity>
-        </ScrollView>
-        // </View>
+        </View>
     )
 };
 
@@ -156,16 +167,31 @@ const styles = StyleSheet.create({
         marginHorizontal: 20,
         // alignSelf: 'flex-end', // Align the button to the right
         marginVertical: 10, // Add margin as needed
-      },
-      submitButtonText: {
+        position: "absolute",
+        width: "90%",
+        bottom: 5,
+
+    },
+    submitButtonText: {
         color: '#ffffff', // White text color
         fontSize: 16, // Font size
-      },
-      checkBoxContainer: {
+    },
+    checkBoxContainer: {
         borderRadius: 10, // Adjust the value for your preferred rounded corners
-      },
-      scrollViewStyle: {
-        
+    },
+    scrollViewStyle: {
+        marginBottom: 60, //
+    },
+    checkBoxText: {
+        flex: 1, // Set flex to allow the text to take available space
+        marginLeft: 10, // Adjust as needed to add space between checkbox and text
+    },
+    picker: {
+        backgroundColor: '#ffffff',
+        borderRadius : 10,
+        width : "95%",
+        marginHorizontal : 10,
+        marginTop : 5,
     }
 
 });
