@@ -1,13 +1,19 @@
 
 import React, { useState, useRef, useEffect } from "react";
-import { Text, View, TouchableOpacity, PanResponder, ScrollView, StyleSheet, useColorScheme,Animated,Easing } from "react-native";
+import { Text, View, TouchableOpacity, PanResponder, ScrollView, StyleSheet, useColorScheme, Animated, Easing } from "react-native";
 import { useDispatch, useSelector } from 'react-redux';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import Feather from 'react-native-vector-icons/Feather';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
+import { HeaderButtons,HeaderButton, Item, OverflowMenu,overflowMenuPressHandlerDropdownMenu, overflowMenuPressHandlerPopupMenu } from 'react-navigation-header-buttons';
+import { RectButton } from "react-native-gesture-handler";
 
+import ThreeDotMenu from "../components/ThreeDotMenu";
 import SlokBox from "../components/SlokBox";
 import DropBox from "../components/DropBox";
 import { setSlokChapterLanguage } from "../redux/gita_action_reducer";
+import { add_bookmark,remove_bookmark } from "../redux/gita_additional_data_reducer";
 import SlokBoxPrimary from "../components/SlokBoxPrimary";
 
 import { LightBackground, DarkBackground } from "../../assets/Constants";
@@ -34,21 +40,36 @@ import { LightBackground, DarkBackground } from "../../assets/Constants";
 
 
 // to do
-// if anthing is missing add the the title and write missing
-// decorate slokbox and slokboxprimary
-// decorate settings
-// categorise settings
-// design header from translation in slokbox 
 // add some animation for reqaching last slok
+// design bookmark screen
+// bug: overflow menu not closing after navigating
 
 const SlokScreen = ({ navigation }) => {
 
     // const [swipeActive, setSwipeActive] = useState(false);
     const swipeActiveRef = useRef();
     const dispatch = useDispatch();
+
+    const MaterialHeaderButton = (props) => (
+        // the `props` here come from <Item ... />
+        // you may access them and pass something else to `HeaderButton` if you like
+        <HeaderButton iconSize={23} {...props} />
+      );
+
     const data = useSelector(state => state.gita_action_reducer.data);
     const { status } = useSelector(state => state.gita_action_reducer);
     const { field_nsutra_value, field_chapter_value, language } = useSelector(state => state.gita_action_reducer.data);
+        // console.log(field_chapter_value,field_nsutra_value);
+    const bookmarkList = useSelector(state => state.gita_additional_data_reducer.bookmarks);
+    console.log("book",bookmarkList);
+
+    const isBookmarkExist = bookmarkList.some(
+        (bookmark) =>
+          bookmark["field_chapter_value"] !== undefined && bookmark["field_nsutra_value"] !== undefined && 
+          bookmark["field_chapter_value"] == field_chapter_value &&
+          bookmark["field_nsutra_value"] == field_nsutra_value
+    );
+      console.log("isBookmarkExist",isBookmarkExist);
 
     const colorScheme = useColorScheme();
     const isDarkMode = colorScheme === 'dark';
@@ -61,7 +82,7 @@ const SlokScreen = ({ navigation }) => {
 
         // swipeActiveRef.current = false;
 
-        if(status === 'loading') {
+        if (status === 'loading') {
             startLoadingAnimation();
         }
 
@@ -70,28 +91,69 @@ const SlokScreen = ({ navigation }) => {
         }
     }, [status]);
 
+    useEffect(() => {
+
+        navigation.setOptions({
+            headerTitle: "Sloks",
+            headerRight: () => (
+              <View style={{ marginRight: 10 }}>
+                <HeaderButtons HeaderButtonComponent={MaterialHeaderButton}  >
+                  {
+                  isBookmarkExist?
+                  <Item
+                  title="bookmarkSelected"
+                  iconName="bookmark"
+                  IconComponent={FontAwesome}
+                  color={"#3498db"}
+                  onPress={() => dispatch(remove_bookmark({field_chapter_value,field_nsutra_value}))}
+                />
+                  :
+                    <Item
+                    title="bookmark"
+                    iconName="bookmark-o"
+                    IconComponent={FontAwesome}
+                    color={"black"}
+                    onPress={() => dispatch(add_bookmark({field_chapter_value,field_nsutra_value}))}
+                  />
+                  }
+                  <OverflowMenu
+                    
+                    OverflowIcon={({ color }) => (
+                      <Feather name="more-vertical" size={23} color={color} />
+                    )}
+                  >
+                    {/* <ThreeDotMenu /> */}
+                  </OverflowMenu>
+
+                </HeaderButtons>
+              </View>
+            ),
+        });
+
+    },[navigation,isBookmarkExist,field_chapter_value, field_nsutra_value]);
+
 
     const arrowRotation = useRef(new Animated.Value(0)).current;
 
-  const startLoadingAnimation = () => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(arrowRotation, {
-          toValue: 1,
-          duration: 1000,
-          easing: Easing.linear,
-          useNativeDriver: true, // Set useNativeDriver to true
-        }),
-        Animated.timing(arrowRotation, {
-          toValue: 0,
-          duration: 1000,
-          easing: Easing.linear,
-          useNativeDriver: true, // Set useNativeDriver to true
-        }),
-      ]),
-      { iterations: 300 } // Change the number of iterations as needed
-    ).start();
-  };
+    const startLoadingAnimation = () => {
+        Animated.loop(
+            Animated.sequence([
+                Animated.timing(arrowRotation, {
+                    toValue: 1,
+                    duration: 1000,
+                    easing: Easing.linear,
+                    useNativeDriver: true, // Set useNativeDriver to true
+                }),
+                Animated.timing(arrowRotation, {
+                    toValue: 0,
+                    duration: 1000,
+                    easing: Easing.linear,
+                    useNativeDriver: true, // Set useNativeDriver to true
+                }),
+            ]),
+            { iterations: 300 } // Change the number of iterations as needed
+        ).start();
+    };
 
 
     function findSlokLimit(chapter) {
@@ -200,6 +262,10 @@ const SlokScreen = ({ navigation }) => {
 
     };
 
+    const handleReload = () => {
+        dispatch(setSlokChapterLanguage([field_chapter_value, field_nsutra_value, language]));
+    };
+
 
 
     const panResponder = PanResponder.create({
@@ -210,7 +276,7 @@ const SlokScreen = ({ navigation }) => {
         onPanResponderMove: (event, gestureState) => {
 
             if (!swipeActiveRef.current) {
-                if (Math.abs(gestureState.dx) > 10) {
+                if (Math.abs(gestureState.dx) > 20) {
                     if (gestureState.dx > 0) {
                         // setfnv(fnv - 1);
                         // dispatch(setSlokChapterLanguage([field_chapter_value, field_nsutra_value - 1, language]));
@@ -258,8 +324,13 @@ const SlokScreen = ({ navigation }) => {
         </View>;
     }
 
-    if (status === 'failed') {
-        return <View style={{ backgroundColor: isDarkMode ? DarkBackground : LightBackground, flex: 1 }}><Text>Error: </Text></View>;
+    if (status === 'rejected') {
+        return <View style={{ backgroundColor: isDarkMode ? DarkBackground : LightBackground, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Text>Something went wrong. Lets retry.</Text>
+            <RectButton style={styles.submitButton} onPress={handleReload}>
+                <Text style={styles.submitButtonText}>Retry</Text>
+            </RectButton>
+        </View>;
     }
 
     if (status === 'success') {
@@ -298,6 +369,18 @@ const styles = StyleSheet.create({
         width: 50,
         height: 50,
         // Other styles for your arrow
+    },
+    submitButton: {
+        backgroundColor: '#3498db', // Blue background color
+        padding: 10, // Padding around the button
+        borderRadius: 5, // Border radius for rounded corners
+        alignItems: 'center', // Center the content horizontally
+        justifyContent: 'center', // Center the content vertically
+        marginHorizontal: 20,
+    },
+    submitButtonText: {
+        color: '#ffffff', // White text color
+        fontSize: 16, // Font size
     },
 
 });

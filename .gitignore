@@ -66,5 +66,3 @@ yarn-error.log
 /coverage
 
 .env
-
-android/gradle.properties

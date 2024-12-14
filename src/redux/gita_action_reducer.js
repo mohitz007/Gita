@@ -140,7 +140,7 @@ const gitaSlice = createSlice({
             
             .addCase(setSlokChapterLanguage.rejected, (state, action) => {
                 state.status = 'rejected';
-                state.error = action.error.message;
+                state.error = action.error.payload;
                 console.log("setSlokChapterLanguage rejected", action);
             })
             .addCase(setSlokChapterLanguage.fulfilled, (state, action) => {
